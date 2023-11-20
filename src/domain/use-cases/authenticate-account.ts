@@ -5,7 +5,7 @@ import { UserRepository } from '@domain/repositories/user.repository';
 import { UnauthorizedException } from '@domain/exceptions/unauthorized.exception';
 
 import { compare } from 'bcryptjs';
-import { UserPayload } from '@infra/modules/auth/decorators/current-user.decorator';
+import { UserPayload } from '@infra/modules/http/decorators/current-user.decorator';
 
 interface Request {
   email: string;

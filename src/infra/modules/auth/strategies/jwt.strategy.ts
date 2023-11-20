@@ -7,7 +7,7 @@ import { EnvService } from '../../env/env.service';
 import {
   UserPayload,
   tokenPayloadSchema,
-} from '../decorators/current-user.decorator';
+} from '../../http/decorators/current-user.decorator';
 
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy) {
