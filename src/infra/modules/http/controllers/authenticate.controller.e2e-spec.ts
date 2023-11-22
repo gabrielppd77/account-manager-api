@@ -1,7 +1,9 @@
-import { AppModule } from '@/infra/modules/app.module';
-import { PrismaService } from '@/infra/modules/prisma/prisma.service';
 import { HttpStatus, INestApplication } from '@nestjs/common';
 import { Test } from '@nestjs/testing';
+
+import { PrismaService } from '@infra/modules/database/prisma/prisma.service';
+import { AppModule } from '@infra/modules/app.module';
+
 import { hash } from 'bcryptjs';
 import request from 'supertest';
 

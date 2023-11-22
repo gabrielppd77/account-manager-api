@@ -1,82 +1,90 @@
-import { ConfigService } from '@nestjs/config';
-import { Env } from '@infra/modules/env/env';
-
-import { EnvService } from '@infra/modules/env/env.service';
+import { User } from '@domain/entities/user';
 import { AuthenticateAccount } from './authenticate-account';
-import { CreateAccount } from './create-account';
 import { JwtService } from '@nestjs/jwt';
 
 import { InMemoryUserRepository } from '@test/repositories/in-memory-user.repository';
 
-const JWT_SECRET = 'JWT_SECRET_FOR_TEST';
+import { hash } from 'bcryptjs';
+
+import { UnauthorizedException } from '@domain/exceptions/unauthorized.exception';
 
 describe('Authenticate account', () => {
   it('should be able authenticate an user', async () => {
-    const configService = new ConfigService<Env, true>();
-    const envService = new EnvService(configService);
     const jwtService = new JwtService({
-      publicKey: envService.get('JWT_PUBLIC_KEY'),
+      secret: '1234',
     });
-
     const userRepository = new InMemoryUserRepository();
-    const createAccount = new CreateAccount(userRepository);
     const authenticateAccount = new AuthenticateAccount(
       userRepository,
       jwtService,
     );
 
-    const accountToCreate = {
-      email: 'jondoe@email.com',
-      password: '1234',
-      name: 'Jon Doe',
-    };
+    const passwordAccount = '12345';
 
-    await createAccount.execute(accountToCreate);
-
-    const { user } = await authenticateAccount.execute({
-      email: accountToCreate.email,
-      password: accountToCreate.password,
+    const accountToCreate = new User({
+      name: 'John Doe',
+      email: 'johndoe@example.com',
+      password: await hash(passwordAccount, 8),
     });
 
-    expect(user).toBeDefined();
-    expect(user.id).toBeDefined();
-    expect(user.email).toEqual(accountToCreate.email);
-    expect(user.password).not.toEqual(accountToCreate.password);
+    await userRepository.create(accountToCreate);
+
+    const { access_token } = await authenticateAccount.execute({
+      email: accountToCreate.email,
+      password: passwordAccount,
+    });
+
+    expect(access_token).toBeTruthy();
   });
 
   it('should be able to show an error when pass the incorrect email', async () => {
+    const jwtService = new JwtService({
+      secret: '1234',
+    });
     const userRepository = new InMemoryUserRepository();
-    const createAccount = new CreateAccount(userRepository);
-    const authenticateAccount = new AuthenticateAccount(userRepository);
+    const authenticateAccount = new AuthenticateAccount(
+      userRepository,
+      jwtService,
+    );
 
-    const accountToCreate = {
-      email: 'email@correct.com',
-      password: '1234',
-      name: 'Jon Doe',
-    };
+    const passwordAccount = '12345';
 
-    await createAccount.execute(accountToCreate);
+    const accountToCreate = new User({
+      name: 'John Doe',
+      email: 'johndoe@example.com',
+      password: await hash(passwordAccount, 8),
+    });
+
+    await userRepository.create(accountToCreate);
 
     expect(
       async () =>
         await authenticateAccount.execute({
           email: 'email@incorrect.com',
-          password: accountToCreate.password,
+          password: passwordAccount,
         }),
-    ).rejects.toThrow(EmailOrPasswordIncorrectException);
+    ).rejects.toThrow(UnauthorizedException);
   });
 
   it('should be able to show an error when pass the incorrect password', async () => {
+    const jwtService = new JwtService({
+      secret: '1234',
+    });
     const userRepository = new InMemoryUserRepository();
-    const createAccount = new CreateAccount(userRepository);
-    const authenticateAccount = new AuthenticateAccount(userRepository);
+    const authenticateAccount = new AuthenticateAccount(
+      userRepository,
+      jwtService,
+    );
 
-    const accountToCreate = {
-      email: 'email@correct.com',
-      password: '12345678',
-    };
+    const passwordAccount = '12345';
 
-    await createAccount.execute(accountToCreate);
+    const accountToCreate = new User({
+      name: 'John Doe',
+      email: 'johndoe@example.com',
+      password: await hash(passwordAccount, 8),
+    });
+
+    await userRepository.create(accountToCreate);
 
     expect(
       async () =>
@@ -84,26 +92,6 @@ describe('Authenticate account', () => {
           email: accountToCreate.email,
           password: 'incorrect-password',
         }),
-    ).rejects.toThrow(EmailOrPasswordIncorrectException);
-  });
-
-  it('should login an user and create tokens correctly', async () => {
-    const jwtService = new JwtService({
-      secret: JWT_SECRET,
-    });
-    const loginUser = new LoginUser(jwtService);
-
-    const inMemoryRepository = new InMemoryUserRepository();
-    const createAccount = new CreateAccount(inMemoryRepository);
-
-    await createAccount.execute({
-      email: 'email@valid.com',
-      password: '1234',
-    });
-    const userCreated = inMemoryRepository.users[0];
-
-    const { access_token } = loginUser.execute({ user: userCreated });
-
-    expect(access_token).toBeTruthy();
+    ).rejects.toThrow(UnauthorizedException);
   });
 });

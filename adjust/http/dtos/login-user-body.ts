@@ -1,8 +1,8 @@
-import { IsString, IsEmail } from 'class-validator';
+// import { IsString, IsEmail } from 'class-validator';
 
-export class LoginUserBody {
-  @IsEmail()
-  email: string;
-  @IsString()
-  password: string;
-}
+// export class LoginUserBody {
+//   @IsEmail()
+//   email: string;
+//   @IsString()
+//   password: string;
+// }

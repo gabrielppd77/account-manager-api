@@ -22,7 +22,7 @@ export class CreateAccountController {
     @Body(new ZodValidationPipe(createAccountBodySchema))
     body: CreateAccountBodySchema,
   ) {
-    const { name, email, password } = createAccountBodySchema.parse(body);
+    const { name, email, password } = body;
 
     await this.createAccount.execute({
       name,
