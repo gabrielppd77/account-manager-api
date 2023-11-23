@@ -2,15 +2,8 @@ import { Body, Controller, HttpCode, HttpStatus, Post } from '@nestjs/common';
 
 import { AuthenticateAccount } from '@domain/use-cases/authenticate-account';
 
-import { ZodValidationPipe } from '@infra/modules/http/pipes/zod-validation.pipe';
-import { z } from 'zod';
-
-const authenticateBodySchema = z.object({
-  email: z.string().email(),
-  password: z.string(),
-});
-
-type AuthenticateBodySchema = z.infer<typeof authenticateBodySchema>;
+import { AuthenticateBodyDTO } from '../dtos/authenticate-body.dto';
+import { AuthenticateResponseDTO } from '../view/authenticate-response.dto';
 
 @Controller('/sessions')
 export class AuthenticateController {
@@ -19,9 +12,8 @@ export class AuthenticateController {
   @Post()
   @HttpCode(HttpStatus.OK)
   async handle(
-    @Body(new ZodValidationPipe(authenticateBodySchema))
-    body: AuthenticateBodySchema,
-  ) {
+    @Body() body: AuthenticateBodyDTO,
+  ): Promise<AuthenticateResponseDTO> {
     const { email, password } = body;
 
     const { access_token } = await this.authenticateAccount.execute({
