@@ -34,12 +34,12 @@ describe('Create account (E2E)', () => {
 
     expect(response.statusCode).toBe(HttpStatus.CREATED);
 
-    const userOnDatabase = await prisma.user.findUnique({
+    const accountOnDB = await prisma.account.findUnique({
       where: {
         email: accountToCreate.email,
       },
     });
 
-    expect(userOnDatabase).toBeTruthy();
+    expect(accountOnDB).toBeTruthy();
   });
 });

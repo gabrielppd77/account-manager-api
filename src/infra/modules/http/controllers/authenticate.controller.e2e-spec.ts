@@ -31,7 +31,7 @@ describe('Authenticate (E2E)', () => {
       password: await hash(passwordAccount, 8),
     };
 
-    await prisma.user.create({
+    await prisma.account.create({
       data: accountToCreate,
     });
 

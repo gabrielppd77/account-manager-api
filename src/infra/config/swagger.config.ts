@@ -4,7 +4,7 @@ import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 export class SwaggerConfig {
   static createDocument(app: INestApplication) {
     const config = new DocumentBuilder()
-      .setTitle('user-maneger')
+      .setTitle('account-maneger')
       .setVersion('1.0')
       .build();
 

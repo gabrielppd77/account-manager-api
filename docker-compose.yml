@@ -2,14 +2,14 @@ version: '3.8'
 
 services:
   postgres:
-    container_name: user-manager-container
+    container_name: account-manager-container
     image: postgres
     ports:
       - 5432:5432
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: 1234
-      POSTGRES_DB: user-manager
+      POSTGRES_DB: account-manager
       PGDATA: /docker/pg
     volumes:
       - ./data/pg:/docker/pg

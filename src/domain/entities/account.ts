@@ -1,12 +1,12 @@
 import { Entity } from '@core/common/entities/entity';
 
-interface UserProps {
+interface AccountProps {
   name: string;
   email: string;
   password: string;
 }
 
-export class User extends Entity<UserProps> {
+export class Account extends Entity<AccountProps> {
   public get name() {
     return this.props.name;
   }

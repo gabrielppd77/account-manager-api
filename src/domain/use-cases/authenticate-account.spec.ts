@@ -1,33 +1,33 @@
-import { User } from '@domain/entities/user';
+import { Account } from '@domain/entities/account';
 import { AuthenticateAccount } from './authenticate-account';
 import { JwtService } from '@nestjs/jwt';
 
-import { InMemoryUserRepository } from '@test/repositories/in-memory-user.repository';
+import { InMemoryAccountRepository } from '@test/repositories/in-memory-account.repository';
 
 import { hash } from 'bcryptjs';
 
 import { UnauthorizedException } from '@domain/exceptions/unauthorized.exception';
 
 describe('Authenticate account', () => {
-  it('should be able authenticate an user', async () => {
+  it('should be able authenticate an account', async () => {
     const jwtService = new JwtService({
       secret: '1234',
     });
-    const userRepository = new InMemoryUserRepository();
+    const accountRepository = new InMemoryAccountRepository();
     const authenticateAccount = new AuthenticateAccount(
-      userRepository,
+      accountRepository,
       jwtService,
     );
 
     const passwordAccount = '12345';
 
-    const accountToCreate = new User({
+    const accountToCreate = new Account({
       name: 'John Doe',
       email: 'johndoe@example.com',
       password: await hash(passwordAccount, 8),
     });
 
-    await userRepository.create(accountToCreate);
+    await accountRepository.create(accountToCreate);
 
     const { access_token } = await authenticateAccount.execute({
       email: accountToCreate.email,
@@ -41,21 +41,21 @@ describe('Authenticate account', () => {
     const jwtService = new JwtService({
       secret: '1234',
     });
-    const userRepository = new InMemoryUserRepository();
+    const accountRepository = new InMemoryAccountRepository();
     const authenticateAccount = new AuthenticateAccount(
-      userRepository,
+      accountRepository,
       jwtService,
     );
 
     const passwordAccount = '12345';
 
-    const accountToCreate = new User({
+    const accountToCreate = new Account({
       name: 'John Doe',
       email: 'johndoe@example.com',
       password: await hash(passwordAccount, 8),
     });
 
-    await userRepository.create(accountToCreate);
+    await accountRepository.create(accountToCreate);
 
     expect(
       async () =>
@@ -70,21 +70,21 @@ describe('Authenticate account', () => {
     const jwtService = new JwtService({
       secret: '1234',
     });
-    const userRepository = new InMemoryUserRepository();
+    const accountRepository = new InMemoryAccountRepository();
     const authenticateAccount = new AuthenticateAccount(
-      userRepository,
+      accountRepository,
       jwtService,
     );
 
     const passwordAccount = '12345';
 
-    const accountToCreate = new User({
+    const accountToCreate = new Account({
       name: 'John Doe',
       email: 'johndoe@example.com',
       password: await hash(passwordAccount, 8),
     });
 
-    await userRepository.create(accountToCreate);
+    await accountRepository.create(accountToCreate);
 
     expect(
       async () =>

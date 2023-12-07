@@ -1,13 +1,13 @@
-import { User } from '@domain/entities/user';
-import { InMemoryUserRepository } from '@test/repositories/in-memory-user.repository';
+import { Account } from '@domain/entities/account';
+import { InMemoryAccountRepository } from '@test/repositories/in-memory-account.repository';
 
 import { CreateAccount } from './create-account';
-import { UserEmailAlreadyExistsException } from '../exceptions/user-email-already-exists.exception';
+import { AccountEmailAlreadyExistsException } from '../exceptions/account-email-already-exists.exception';
 
 describe('CreateAccount', () => {
   it('should be able to create an account', async () => {
-    const userRepository = new InMemoryUserRepository();
-    const createAccount = new CreateAccount(userRepository);
+    const accountRepository = new InMemoryAccountRepository();
+    const createAccount = new CreateAccount(accountRepository);
 
     const accountToCreate = {
       email: 'jondoe@email.com',
@@ -17,7 +17,7 @@ describe('CreateAccount', () => {
 
     await createAccount.execute(accountToCreate);
 
-    const accountCreated = userRepository.users[0];
+    const accountCreated = accountRepository.accounts[0];
 
     expect(accountCreated).toBeTruthy();
 
@@ -28,18 +28,18 @@ describe('CreateAccount', () => {
   });
 
   it('should show error when found that email already exists', async () => {
-    const userRepository = new InMemoryUserRepository();
-    const createAccount = new CreateAccount(userRepository);
+    const accountRepository = new InMemoryAccountRepository();
+    const createAccount = new CreateAccount(accountRepository);
 
     const emailRepeated = 'email@valid.com';
 
-    const newUser = new User({
+    const newAccount = new Account({
       email: emailRepeated,
       password: '1234',
       name: 'jondoe',
     });
 
-    await userRepository.create(newUser);
+    await accountRepository.create(newAccount);
 
     expect(
       async () =>
@@ -48,6 +48,6 @@ describe('CreateAccount', () => {
           password: '1234',
           name: 'jondoe',
         }),
-    ).rejects.toThrow(UserEmailAlreadyExistsException);
+    ).rejects.toThrow(AccountEmailAlreadyExistsException);
   });
 });

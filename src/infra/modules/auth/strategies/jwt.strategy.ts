@@ -5,9 +5,9 @@ import { ExtractJwt, Strategy } from 'passport-jwt';
 import { EnvService } from '../../env/env.service';
 
 import {
-  UserPayload,
+  AccountPayload,
   tokenPayloadSchema,
-} from '../../http/decorators/current-user.decorator';
+} from '../../http/decorators/current-account.decorator';
 
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy) {
@@ -20,7 +20,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     });
   }
 
-  async validate(payload: UserPayload) {
+  async validate(payload: AccountPayload) {
     return tokenPayloadSchema.parse(payload);
   }
 }

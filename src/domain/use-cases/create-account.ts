@@ -1,9 +1,9 @@
 import { Injectable } from '@nestjs/common';
 
-import { User } from '@domain/entities/user';
-import { UserRepository } from '@domain/repositories/user.repository';
+import { Account } from '@domain/entities/account';
+import { AccountRepository } from '@domain/repositories/account.repository';
 
-import { UserEmailAlreadyExistsException } from '@domain/exceptions/user-email-already-exists.exception';
+import { AccountEmailAlreadyExistsException } from '@domain/exceptions/account-email-already-exists.exception';
 
 import { hash } from 'bcryptjs';
 
@@ -17,25 +17,25 @@ type Response = void;
 
 @Injectable()
 export class CreateAccount {
-  constructor(private userRepository: UserRepository) {}
+  constructor(private accountRepository: AccountRepository) {}
 
   async execute(req: Request): Promise<Response> {
     const { name, email, password } = req;
 
-    const userWithSameEmail = await this.userRepository.findByEmail(email);
+    const accountWitSameEmail = await this.accountRepository.findByEmail(email);
 
-    if (userWithSameEmail) {
-      throw new UserEmailAlreadyExistsException();
+    if (accountWitSameEmail) {
+      throw new AccountEmailAlreadyExistsException();
     }
 
     const hashedPassword = await hash(password, 8);
 
-    const user = new User({
+    const account = new Account({
       email,
       name,
       password: hashedPassword,
     });
 
-    await this.userRepository.create(user);
+    await this.accountRepository.create(account);
   }
 }
