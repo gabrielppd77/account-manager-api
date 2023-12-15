@@ -7,15 +7,19 @@ interface AccountProps {
 }
 
 export class Account extends Entity<AccountProps> {
-  public get name() {
+  get name() {
     return this.props.name;
   }
 
-  public get email() {
+  get email() {
     return this.props.email;
   }
 
-  public get password() {
+  get password() {
     return this.props.password;
+  }
+
+  set password(password: string) {
+    this.props.password = password;
   }
 }

@@ -19,8 +19,30 @@ export class PrismaAccountRepository implements AccountRepository {
     if (!accountFinded) return null;
     return PrismaAccountMapper.toDomain(accountFinded);
   }
+
+  async findById(accountId: string): Promise<Account | null> {
+    const accountFinded = await this.prisma.account.findUnique({
+      where: {
+        id: accountId,
+      },
+    });
+    if (!accountFinded) return null;
+    return PrismaAccountMapper.toDomain(accountFinded);
+  }
+
   async create(account: Account): Promise<void> {
     const accountToPrisma = PrismaAccountMapper.toPrisma(account);
     await this.prisma.account.create({ data: accountToPrisma });
+  }
+
+  async updatePassword(accountId: string, newPassword: string): Promise<void> {
+    await this.prisma.account.update({
+      where: {
+        id: accountId,
+      },
+      data: {
+        password: newPassword,
+      },
+    });
   }
 }
