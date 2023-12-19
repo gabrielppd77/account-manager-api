@@ -4,6 +4,7 @@ import { AccountRepository } from '@domain/repositories/account.repository';
 
 import { AccountNotFindException } from '@domain/exceptions/account-not-find.exception';
 import { AccountPasswordNotValidException } from '@domain/exceptions/account-password-not-valid.exception';
+import { NewPasswordSameOldPasswordException } from '@domain/exceptions/new-password-same-old-password.exception';
 
 import { compare, hash } from 'bcryptjs';
 
@@ -32,6 +33,12 @@ export class ChangePassword {
 
     if (!isPasswordValid) {
       throw new AccountPasswordNotValidException();
+    }
+
+    const isSamePassword = await compare(newPassword, account.password);
+
+    if (isSamePassword) {
+      throw new NewPasswordSameOldPasswordException();
     }
 
     const hashedNewPassword = await hash(newPassword, 8);

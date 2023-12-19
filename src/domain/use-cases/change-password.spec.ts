@@ -5,6 +5,7 @@ import { ChangePassword } from './change-password';
 
 import { AccountNotFindException } from '@domain/exceptions/account-not-find.exception';
 import { AccountPasswordNotValidException } from '@domain/exceptions/account-password-not-valid.exception';
+import { NewPasswordSameOldPasswordException } from '@domain/exceptions/new-password-same-old-password.exception';
 
 import { compare, hash } from 'bcryptjs';
 
@@ -91,5 +92,30 @@ describe('ChangePassword', () => {
           oldPassword: 'invalid-password',
         }),
     ).rejects.toThrow(AccountPasswordNotValidException);
+  });
+
+  it('should show error when new password is the same password as the old password', async () => {
+    const accountRepository = new InMemoryAccountRepository();
+    const changePassword = new ChangePassword(accountRepository);
+
+    const oldPassword = '1234';
+
+    const accountToCreate = new Account({
+      email: 'jondoe@email.com',
+      name: 'Jon Doe',
+      password: await hash(oldPassword, 8),
+    });
+    accountRepository.create(accountToCreate);
+
+    const newPassword = '1234';
+
+    expect(
+      async () =>
+        await changePassword.execute({
+          accountId: accountToCreate.id.toValue(),
+          newPassword,
+          oldPassword,
+        }),
+    ).rejects.toThrow(NewPasswordSameOldPasswordException);
   });
 });
