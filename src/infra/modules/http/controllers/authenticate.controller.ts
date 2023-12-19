@@ -5,10 +5,13 @@ import { AuthenticateAccount } from '@domain/use-cases/authenticate-account';
 import { AuthenticateDTO } from '../dtos/authenticate.dto';
 import { AuthenticatePresenter } from '../presenters/authenticate.presenter';
 
+import { Public } from '../decorators/public.decorator';
+
 @Controller('/sessions')
 export class AuthenticateController {
   constructor(private authenticateAccount: AuthenticateAccount) {}
 
+  @Public()
   @Post()
   @HttpCode(HttpStatus.OK)
   async handle(@Body() body: AuthenticateDTO): Promise<AuthenticatePresenter> {
