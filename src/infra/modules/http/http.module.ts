@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common';
 
 import { DatabaseModule } from '../database/database.module';
+import { MailModule } from '../mail/mail.module';
 
 import { CreateAccountController } from './controllers/create-account.controller';
 import { AuthenticateController } from './controllers/authenticate.controller';
@@ -11,7 +12,7 @@ import { AuthenticateAccount } from '@domain/use-cases/authenticate-account';
 import { ChangePassword } from '@domain/use-cases/change-password';
 
 @Module({
-  imports: [DatabaseModule],
+  imports: [DatabaseModule, MailModule],
   controllers: [
     CreateAccountController,
     AuthenticateController,
